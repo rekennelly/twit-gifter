@@ -1,4 +1,6 @@
 import os
+import subprocess
+import tempfile
 
 import requests as r
 
@@ -80,10 +82,34 @@ def get_video_url_from_status(status):
 
     return urls[0]
 
+def download_mp4(url):
+    """
+    Download an mp4 from a given url.
+
+    TO DO: Test and finish this function
+    """
+    resp = r.get(url)
+    tmp = tempfile.mktemp()
+
+    with open(tmp, 'wb') as handle:
+        handle.write(resp.raw)
+
+    return tmp
+
+def convert_mp4_to_gif(mp4, gif_path):
+    """
+    Shell out mp4->gif conversion to FFMPeG
+    """
+    return subprocess.call('ffmpeg', ['-i', mp4, gif_path])
+
+
 if __name__ == "__main__":
     key, secret = get_twitter_creds_from_env()
     token = get_auth_token(key, secret)
     status = get_status_by_id('854059190511423489',token)
+    #url = get_video_url_from_status(status)
     print(get_video_url_from_status(status))
+    #mp4 = download_mp4(url)
+    #convert_mp4_to_gif()
 
 # .py | jq '.'
